@@ -2,15 +2,35 @@
 
 namespace App\Models;
 
+use App\Traits\HasShlug;
+use Coderflex\Laravisit\Concerns\CanVisit;
+use Coderflex\Laravisit\Concerns\HasVisits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Thread extends Model
+class Thread extends Model implements CanVisit
 {
-    use HasFactory;
+    use HasFactory, HasShlug, HasVisits;
 
 
     protected $fillable = ['user_id','title','slug','description','content','solved_comment_id','status'];
+
+
+    public function scopeSearch($query)
+    {
+        return $query->when(request()->search, function($query){
+            $query->where('title', 'like', '%'.request()->search. '%');
+        });
+    }
+
+
+    public function scopeStatus($query)
+    {
+        return $query->when(request()->status, function($query){
+            $query->where('status', request()->status);
+        });
+    }
 
     public function user()
     {
