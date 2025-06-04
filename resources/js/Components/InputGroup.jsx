@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function InputGroup({label, icon, type, placeholder, errors, ...props}) {
     return (
-        <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2'>
             <label className='text-sm text-gray-500'>
                 {label}
             </label>
