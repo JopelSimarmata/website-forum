@@ -1,97 +1,66 @@
-import { useEffect } from 'react';
-import Checkbox from '@/Components/Checkbox';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import React from 'react'
+import InputGroup from '@/Components/InputGroup'
+import AuthLayout from '@/Layouts/AuthLayout'
+import { Head, Link, useForm } from '@inertiajs/react'
+import { IconLock, IconUser } from '@tabler/icons-react'
+export default function Login() {
 
-export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    // definisikan use form
+    const { data, setData, post, errors } = useForm({
         email: '',
         password: '',
-        remember: false,
-    });
+    })
 
-    useEffect(() => {
-        return () => {
-            reset('password');
-        };
-    }, []);
+    // definisikan sebuah method login
+    function login(e){
+        e.preventDefault()
 
-    const submit = (e) => {
-        e.preventDefault();
-
-        post(route('login'));
-    };
+        post('/login')
+    }
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
-
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="block mt-4">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
-                        />
-                        <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Forgot your password?
+        <>
+            <Head title='Login'/>
+            <div className='border bg-white p-10 rounded-lg w-full max-w-lg'>
+                <h1 className='text-2xl font-semibold text-black mb-2'>Login</h1>
+                <p className='text-gray-500 text-sm mb-5'>
+                    Selamat datang, masukan email dan kata sandi anda untuk melanjutkan.
+                </p>
+                <form onSubmit={login}>
+                    <div className='mb-5'>
+                        <InputGroup
+                            label={'Email'}
+                            type={'text'}
+                            icon={<IconUser strokeWidth={'1.5'} className='text-gray-400'/>}
+                            placeholder={'example@dev.com'}
+                            value={data.email}
+                            onChange={e => setData('email', e.target.value)}
+                            errors={errors.email}
+                            />
+                    </div>
+                    <div className='mb-5'>
+                        <InputGroup
+                            label={'Kata Sandi'}
+                            type={'password'}
+                            icon={<IconLock strokeWidth={'1.5'} className='text-gray-400'/>}
+                            placeholder={'Secret...'}
+                            value={data.password}
+                            onChange={e => setData('password', e.target.value)}
+                            errors={errors.password}
+                            />
+                    </div>
+                    <div className='flex items-center gap-3'>
+                        <button className='rounded-lg px-6 py-2 bg-gray-700 text-gray-50 hover:scale-110 duration-300' type='submit'>
+                            Masuk
+                        </button>
+                        <Link href={'/register'} className='rounded-lg px-6 py-2 bg-sky-700 text-gray-50 hover:scale-110 duration-300'>
+                            Daftar
                         </Link>
-                    )}
-
-                    <PrimaryButton className="ml-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+                    </div>
+                </form>
+            </div>
+        </>
+    )
 }
+
+Login.layout = page => <AuthLayout children={page}/>
